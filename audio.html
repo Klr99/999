@@ -5,26 +5,30 @@
     <title>Audio Player</title>
 </head>
 <body>
-    <audio id="musiqueFond" loop autoplay>
+    <audio id="musiqueFond" loop style="display: none;">
         <source src="https://klr99.github.io/999/musique%20d'accueil.mp3" type="audio/mpeg">
         Votre navigateur ne supporte pas l'élément audio.
     </audio>
     
     <script>
-        // Régler le volume initial
+        // Récupérer l'élément audio
         const audio = document.getElementById('musiqueFond');
+
+        // Régler le volume initial
         audio.volume = 0.30;
 
-        // Gérer l'état de l'audio avec localStorage
+        // Gérer l'état de l'audio via postMessage
         window.addEventListener('message', (event) => {
             if (event.data === 'playAudio') {
-                audio.play();
+                audio.play().catch(error => console.log('Erreur de lecture audio :', error));
+                window.parent.postMessage('audioPlaying', '*');
             } else if (event.data === 'pauseAudio') {
                 audio.pause();
+                window.parent.postMessage('audioPaused', '*');
             }
         });
-        
-        // Envoyer l'état de l'audio quand l'état change
+
+        // Informer le parent lorsque l'audio démarre ou s'arrête
         audio.onplay = () => window.parent.postMessage('audioPlaying', '*');
         audio.onpause = () => window.parent.postMessage('audioPaused', '*');
     </script>
