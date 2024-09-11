@@ -11,18 +11,18 @@
     </audio>
     
     <script>
-        // Récupérer l'élément audio
         const audio = document.getElementById('musiqueFond');
-
-        // Régler le volume initial
         audio.volume = 0.30;
 
-        // Gérer l'état de l'audio via postMessage
         window.addEventListener('message', (event) => {
             if (event.data === 'playAudio') {
+                // Essayer de jouer l'audio, mais seulement après l'interaction utilisateur
                 audio.play().then(() => {
                     window.parent.postMessage('audioPlaying', '*');
-                }).catch(error => console.error('Erreur de lecture audio :', error));
+                }).catch(error => {
+                    console.error('Erreur de lecture audio :', error);
+                    window.parent.postMessage('audioPlayFailed', '*');
+                });
             } else if (event.data === 'pauseAudio') {
                 audio.pause();
                 window.parent.postMessage('audioPaused', '*');
