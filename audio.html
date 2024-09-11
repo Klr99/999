@@ -20,8 +20,9 @@
         // Gérer l'état de l'audio via postMessage
         window.addEventListener('message', (event) => {
             if (event.data === 'playAudio') {
-                audio.play().catch(error => console.log('Erreur de lecture audio :', error));
-                window.parent.postMessage('audioPlaying', '*');
+                audio.play().then(() => {
+                    window.parent.postMessage('audioPlaying', '*');
+                }).catch(error => console.error('Erreur de lecture audio :', error));
             } else if (event.data === 'pauseAudio') {
                 audio.pause();
                 window.parent.postMessage('audioPaused', '*');
